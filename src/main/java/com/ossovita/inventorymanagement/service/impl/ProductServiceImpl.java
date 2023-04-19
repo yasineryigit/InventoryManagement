@@ -1,5 +1,7 @@
 package com.ossovita.inventorymanagement.service.impl;
 
+import com.ossovita.inventorymanagement.email.EmailService;
+import com.ossovita.inventorymanagement.entity.History;
 import com.ossovita.inventorymanagement.entity.Product;
 import com.ossovita.inventorymanagement.entity.ProductCategory;
 import com.ossovita.inventorymanagement.entity.ProductInventory;
@@ -8,6 +10,7 @@ import com.ossovita.inventorymanagement.error.exception.UnsufficientProductCount
 import com.ossovita.inventorymanagement.payload.request.ProductRequest;
 import com.ossovita.inventorymanagement.payload.request.UpdateProductCountRequest;
 import com.ossovita.inventorymanagement.payload.request.UpdateProductRequest;
+import com.ossovita.inventorymanagement.repository.HistoryRepository;
 import com.ossovita.inventorymanagement.repository.ProductCategoryRepository;
 import com.ossovita.inventorymanagement.repository.ProductInventoryRepository;
 import com.ossovita.inventorymanagement.repository.ProductRepository;
@@ -17,6 +20,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -28,12 +32,16 @@ public class ProductServiceImpl implements ProductService {
     ProductRepository productRepository;
     ProductCategoryRepository productCategoryRepository;
     ProductInventoryRepository productInventoryRepository;
+    HistoryRepository historyRepository;
+    EmailService emailService;
 
-    public ProductServiceImpl(ModelMapper modelMapper, ProductRepository productRepository, ProductCategoryRepository productCategoryRepository, ProductInventoryRepository productInventoryRepository) {
+    public ProductServiceImpl(ModelMapper modelMapper, ProductRepository productRepository, ProductCategoryRepository productCategoryRepository, ProductInventoryRepository productInventoryRepository, HistoryRepository historyRepository, EmailService emailService) {
         this.modelMapper = modelMapper;
         this.productRepository = productRepository;
         this.productCategoryRepository = productCategoryRepository;
         this.productInventoryRepository = productInventoryRepository;
+        this.historyRepository = historyRepository;
+        this.emailService = emailService;
     }
 
     @Override
@@ -41,6 +49,7 @@ public class ProductServiceImpl implements ProductService {
         //Save Product
         Product product = modelMapper.map(productRequest, Product.class);
         Product savedProduct = productRepository.save(product);
+        saveHistory(product, "Create product");
 
         //Save ProductCategory
         ProductCategory productCategory = ProductCategory.builder()
@@ -75,11 +84,14 @@ public class ProductServiceImpl implements ProductService {
             log.error("Unsufficient product count for productId: " + product.getProductId() + " productName:" + product.getProductName());
             throw new UnsufficientProductCountException("Unsufficient product count for productId: " + product.getProductId() + ", productName:" + product.getProductName());
         } else {//if stocks are sufficient, continue
+            product.setProductCount(updatedProductCount);
             if (updatedProductCount <= product.getProductAlertCount()) {//if productCount is below critical number, alert user
+                emailService.sendAlertMail(product);
                 log.error("Product: " + product.getProductName() + " below alert count: " + updatedProductCount);
             }
-            product.setProductCount(updatedProductCount);
+            saveHistory(product, "Update product count: " + updatedProductCount);
             return productRepository.save(product);
+
         }
 
 
@@ -106,6 +118,7 @@ public class ProductServiceImpl implements ProductService {
         productInventoryRepository.deleteByProductId(productId);
         productCategoryRepository.deleteByProductId(productId);
         productRepository.delete(product);
+        saveHistory(product, "Delete product ");
     }
 
     @Override
@@ -118,13 +131,22 @@ public class ProductServiceImpl implements ProductService {
         product.setProductName(updateProductRequest.getProductName());
         product.setProductCount(updateProductRequest.getProductCount());
         product.setProductAlertCount(updateProductRequest.getProductAlertCount());
-
+        saveHistory(product, "Update product");
         return productRepository.save(product);
     }
 
     @Override
     public List<Product> getProductsByProductNameAndWarehouseAddressRegion(String productName, String addressRegion) {
         return productRepository.getProductsByProductNameAndWarehouseAddressRegion(productName, addressRegion);
+    }
+
+    public void saveHistory(Product product, String operation) {
+        History history = History.builder().productId(product.getProductId())
+                .operation(operation)
+                .dateTime(LocalDateTime.now())
+                .build();
+        historyRepository.save(history);
+
     }
 
 

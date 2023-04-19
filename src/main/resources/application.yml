@@ -1,6 +1,7 @@
 spring:
   application:
     name: inventory-management
+
   datasource:
     url: jdbc:postgresql://localhost:5432/inventory_management
     username: postgres
@@ -11,6 +12,24 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  mail:
+    host: localhost
+    port: 1025
+    username: hello
+    password: hello
+
+    properties:
+      mail:
+        smtp:
+          ssl:
+            trust: "*"
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+
 server:
   port: 8086
   servlet:
