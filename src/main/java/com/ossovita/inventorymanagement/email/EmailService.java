@@ -55,13 +55,14 @@ public class EmailService implements EmailSender {
                 \t<div style="background-color: #f2f2f2; padding: 20px;">
                 \t\t<h1>Stock Alert!</h1>
                 \t\t<p>Hello %s,</p>
-                \t\t<p>This is an notification about your warehouse </p>
-                \t\t<p>We send you this email due to your stock count has changed</p>
+                \t\t<p>We would like to inform you that there has been a change in your warehouse's stock count. </p>
+  
                 \t\t<ul>
-                \t\t\t<li>%s product is below the critical stock count: %d</li>
+                \t\t\t<li>The stock count for the %s product has fallen below the critical level of %d</li>
                 \t\t</ul>
-                \t\t<p>We highly recommend that you check your inventory so that you do not have problems with the stock.</p>
+                \t\t<p>We recommend that you check your inventory to avoid any issues with stock levels.</p>
                 \t\t<p>Best Regards.</p>
+                \t\t<p>-Warehouse LLC</p>
                 \t</div>
                 </body>
                 </html>""";
