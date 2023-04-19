@@ -13,3 +13,7 @@ spring:
     show-sql: true
 server:
   port: 8086
+  servlet:
+    context-path: /api/1.0
+
+

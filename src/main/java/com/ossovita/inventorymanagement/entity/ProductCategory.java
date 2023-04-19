@@ -14,7 +14,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProductCategories {
+public class ProductCategory {
 
     @Id
     @SequenceGenerator(name = "product_categories_seq", allocationSize = 1)
@@ -28,7 +28,7 @@ public class ProductCategories {
     private Product product;
 
     @Column(name = "product_id")
-    private long product_id;
+    private long productId;
 
     @ManyToOne
     @JoinColumn(name = "category_id", insertable = false, updatable = false)
@@ -36,7 +36,7 @@ public class ProductCategories {
     private Category category;
 
     @Column(name = "category_id")
-    private long category_id;
+    private long categoryId;
 
 
 

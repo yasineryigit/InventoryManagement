@@ -14,12 +14,12 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProductInventories {
+public class ProductInventory {
 
     @Id
     @SequenceGenerator(name = "product_inventories_seq", allocationSize = 1)
     @GeneratedValue(generator = "product_inventories_seq", strategy = GenerationType.SEQUENCE)
-    @Column(name = "product_sequence_id")
+    @Column(name = "product_inventory_id")
     private long productInventoryId;
 
 
@@ -29,7 +29,7 @@ public class ProductInventories {
     private Product product;
 
     @Column(name = "product_id")
-    private long product_id;
+    private long productId;
 
 
     @ManyToOne
@@ -38,6 +38,6 @@ public class ProductInventories {
     private Inventory inventory;
 
     @Column(name = "inventory_id")
-    private long inventory_id;
+    private long inventoryId;
 
 }

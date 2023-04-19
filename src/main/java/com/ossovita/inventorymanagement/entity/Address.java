@@ -1,5 +1,6 @@
 package com.ossovita.inventorymanagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,12 +38,9 @@ public class Address {
     @Column(name = "address_detailed")
     private String addressDetailed;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "warehouse_id", insertable = false, updatable = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "address")
+    @JsonIgnore
     private Warehouse warehouse;
-
-    @Column(name = "warehouse_id")
-    private long warehouseId;
 
 
 

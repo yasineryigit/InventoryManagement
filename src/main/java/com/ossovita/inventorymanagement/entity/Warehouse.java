@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -26,10 +27,16 @@ public class Warehouse {
     @Column(name = "warehouse_name")
     private String warehouseName;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "warehouse")
+    @OneToMany(mappedBy = "warehouse")
     @JsonIgnore
+    private List<Inventory> inventoryList;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id", insertable = false, updatable = false)
     private Address address;
 
+    @Column(name = "address_id")
+    private long addressId;
 
 
 }

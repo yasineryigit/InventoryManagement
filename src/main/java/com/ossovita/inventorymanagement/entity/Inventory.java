@@ -27,11 +27,18 @@ public class Inventory {
     @Column(name = "inventory_name")
     private String inventoryName;
 
+    @ManyToOne
+    @JoinColumn(name = "warehouse_id", insertable = false, updatable = false)
+    @JsonIgnore
+    private Warehouse warehouse;
+
+    @Column(name = "warehouse_id")
+    private long warehouseId;
+
+
     @OneToMany(mappedBy = "inventory")
     @JsonIgnore
-    private List<ProductInventories> productInventoriesList;
-
-
+    private List<ProductInventory> productInventoryList;
 
 
 }

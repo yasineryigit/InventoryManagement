@@ -34,11 +34,13 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     @JsonIgnore
-    private List<ProductCategories> productCategoriesList;
+    private List<ProductCategory> productCategoryList;
 
     @OneToMany(mappedBy = "product")
     @JsonIgnore
-    private List<ProductInventories> productInventoriesList;
+    private List<ProductInventory> productInventoryList;
+
+
 
 
 
